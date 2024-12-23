@@ -1,0 +1,34 @@
+name: Deploy to Contentstack Launch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Deploy to Contentstack Launch
+        env:
+          CONTENTSTACK_API_KEY: ${{ secrets.CONTENTSTACK_API_KEY }}
+          CONTENTSTACK_DELIVERY_TOKEN: ${{ secrets.CONTENTSTACK_DELIVERY_TOKEN }}
+          CONTENTSTACK_STACK_API_KEY: ${{ secrets.CONTENTSTACK_STACK_API_KEY }}
+          CONTENTSTACK_ENVIRONMENT: ${{ secrets.CONTENTSTACK_ENVIRONMENT }}
+        run: |
+          curl -X POST https://api.contentstack.io/v3/stacks/${{ secrets.CONTENTSTACK_STACK_API_KEY }}/environments/${{ secrets.CONTENTSTACK_ENVIRONMENT }}/deployments \
+          -H "Authorization: ${CONTENTSTACK_API_KEY}" \
+          -H "Content-Type: application/json" \
+          -d "{'status': 'ready'}"
+        
