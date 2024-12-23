@@ -25,12 +25,6 @@ jobs:
       - name: Deploy to Contentstack Launch
         env:
           CONTENTSTACK_API_KEY: ${{ secrets.CONTENTSTACK_API_KEY }}
-          CONTENTSTACK_DELIVERY_TOKEN: ${{ secrets.CONTENTSTACK_DELIVERY_TOKEN }}
-          CONTENTSTACK_STACK_API_KEY: ${{ secrets.CONTENTSTACK_STACK_API_KEY }}
-          CONTENTSTACK_ENVIRONMENT: ${{ secrets.CONTENTSTACK_ENVIRONMENT }}
         run: |
-          curl -X POST https://api.contentstack.io/v3/stacks/${{ secrets.CONTENTSTACK_STACK_API_KEY }}/environments/${{ secrets.CONTENTSTACK_ENVIRONMENT }}/deployments \
-          -H "Authorization: ${CONTENTSTACK_API_KEY}" \
-          -H "Content-Type: application/json" \
-          -d '{"status": "ready"}'
+          curl -X POST https://eu-launch-api.contentstack.com/manage/deploy/${{ secrets.CONTENTSTACK_DEPLOY_HOOK_ID }}?commit=${{ github.sha }}
         
